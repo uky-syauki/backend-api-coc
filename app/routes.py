@@ -11,7 +11,7 @@ def add():
         if len(data['nama']) < 2:
             print(f"Data nama {data['nama']} < 2")
             return jsonify({"message":"nama"})
-        if len(data['email']) < 2:
+        if len(data['email']) < 2 or "@" not in data['email']:
             print(f"Data email {data['email']} < 2")
             return jsonify({"message":"email"})
         if len(data['telepon']) < 2:
