@@ -6,6 +6,10 @@ from app import app, db
 
 @app.route("/api/add", methods=["POST","GET"])
 def add():
+    allData = Pendaftar.query.all()
+    allEmail = []
+    for isi in allData:
+        allEmail.append(isi.email)
     try:
         data = request.json
         if len(data['nama']) < 2:
@@ -20,12 +24,14 @@ def add():
         if len(data['asalSekolah']) < 2:
             print(f"Data asalSekolah {data['asalSekolah']} < 2")
             return jsonify({"message":"asalSekolah"})
+        if data['email'] in allEmail:
+            return jsonify({"message":"emailtrue"})
         
         orangDaftar = Pendaftar(nama_lengkap=data['nama'], email=data['email'], no_telp=data['telepon'], asal=data['asalSekolah'])
         db.session.add(orangDaftar)
         db.session.commit()
         print(data)
-        return jsonify({"message":"success","nama":orangDaftar.nama_lengkap})
+        return jsonify({"message":"success","nama":orangDaftar.email})
     except:
         db.session.rollback()
         return jsonify({"message":"error"})
@@ -33,7 +39,7 @@ def add():
 
 @app.route("/api/<pendaftar>", methods=["GET","POST"])
 def orang(pendaftar):
-    data = Pendaftar.query.filter_by(nama_lengkap=pendaftar).first()
+    data = Pendaftar.query.filter_by(email=pendaftar).first()
     print(bool(data))
     if data:
         newData = {
